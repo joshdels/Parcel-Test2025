@@ -6,12 +6,10 @@
 const char* ssid = "PLDTHOMEFIBRiEcjt";
 const char* password = "PLDTWIFInC3i3";
 
-IPAddress local_ip(192, 168, 1, 21);  // Change this IP to your desired one
-IPAddress gateway(192, 168, 1, 1);     // Gateway (router IP)
-IPAddress subnet(255, 255, 255, 0);    // Subnet mask
+// Replace this with your computer's local IP address (your server)
+const char* serverUrl = "http://192.168.1.18:8080/data.json";  
 
-// Replace this with your computer's local IP address
-const char* serverUrl = "http://192.168.1.12:8080/data.json";  
+HTTPClient http;
 
 void setup() {
   // Start the Serial Monitor
@@ -20,12 +18,11 @@ void setup() {
 
 
   // Connect to Wi-Fi
-  WiFi.config(local_ip, gateway, subnet);  // Set static IP
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    Serial.println("Connecting to WiFi...");
+    Serial.println("Connecting...");
   }
 
   //Connected to WiFi
@@ -70,13 +67,16 @@ void setup() {
       Serial.print("Date: ");
       Serial.println(date);
       Serial.println();
+
     }
   } else {
     // If the HTTP request failed
     Serial.println("Error in HTTP request");
   }
+    // HTTP post 
 
   http.end();  // Free resources
+
 }
 
 void loop() {
