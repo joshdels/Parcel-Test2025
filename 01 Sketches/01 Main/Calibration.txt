@@ -1,0 +1,6 @@
+const int XP = 9, XM = A3, YP = A2, YM = 8; // 320x480 ID=0x9488
+const int TS_LEFT = 112, TS_RT = 944, TS_TOP = 94, TS_BOT = 932;
+
+// Map raw touch coordinates to screen coordinates
+int x = map(p.x, TS_LEFT, TS_RT, 0, 320);
+int y = map(p.y, TS_TOP, TS_BOT, 0, 480);
