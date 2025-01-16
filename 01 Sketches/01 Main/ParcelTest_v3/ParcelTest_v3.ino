@@ -13,8 +13,6 @@
 #include <MCUFRIEND_kbv.h>
 #include <TouchScreen.h>
 
-
-
 //Colors
 #define BLACK   0x0000
 #define BLUE    0x001F
@@ -51,7 +49,6 @@ bool buttonState1 = false; // Solenoid 1
 bool buttonState2 = false; // Solenoid 2
 bool buttonState3 = true; // Barcode Scanner
 
-
 //   Touchscreen Settings  //
 // Calibrated Values
 const int XP = 9, XM = A3, YP = A2, YM = 8; // 320x480 ID=0x9488
@@ -75,7 +72,6 @@ int button2x = 40, button2y = 140, buttonWidth2 = 120, buttonHeight2 = 60;
 // Button 3 - for Barcode Scanner
 int button3x = 310, button3y = 170, buttonWidth3 = 100, buttonHeight3 = 40;
 
-
 // Touch detection function
 bool Touch_getXY()
 {
@@ -96,7 +92,6 @@ bool Touch_getXY()
     }
     return pressed;
 }
-
 
 //Proximity Configurations
 float get_distance() {
