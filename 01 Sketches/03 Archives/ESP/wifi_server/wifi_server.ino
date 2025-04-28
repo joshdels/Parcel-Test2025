@@ -1,3 +1,10 @@
+/* Connection Testing
+Date 25/01/2025
+
+Documentation for HTTPClient.h
+https://links2004.github.io/Arduino/dd/d8d/class_h_t_t_p_client.html#a5b90eb84c3dcc89a534ac9956418001d
+*/
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>  // For JSON parsing
@@ -7,29 +14,25 @@ const char* ssid = "PLDTHOMEFIBRiEcjt";
 const char* password = "PLDTWIFInC3i3";
 
 // Replace this with your computer's local IP address (your server)
-const char* serverUrl = "http://192.168.1.18:8080/data.json";  
-
-HTTPClient http;
-
-void setup() {
-  // Start the Serial Monitor
-  
-  Serial.begin(115200);
+const char* serverUrl = "http://192.168.1.18:3000";  
 
 
-  // Connect to Wi-Fi
+void connect_wifi() {
   WiFi.begin(ssid, password);
+  // Connect to Wi-Fi
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting...");
-  }
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(1000);
+      Serial.println("Connecting...");
+    }
 
-  //Connected to WiFi
-  Serial.println("Connected to WiFi!");
-  Serial.print("ESP IP Address: ");
-  Serial.println(WiFi.localIP());
+    //Connected to WiFi
+    Serial.println("Connected to WiFi!");
+    Serial.print("ESP IP Address: ");
+    Serial.println(WiFi.localIP());
+}
 
+void connect_server() {
   // Fetch and parse JSON data from the server
   HTTPClient http;
   WiFiClient client;
@@ -73,6 +76,18 @@ void setup() {
     // If the HTTP request failed
     Serial.println("Error in HTTP request");
   }
+}
+
+void setup() {
+  // Start the Serial Monitor
+  
+  Serial.begin(115200);
+
+
+  
+  
+
+
     // HTTP post 
 
   http.end();  // Free resources

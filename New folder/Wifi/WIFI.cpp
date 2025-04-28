@@ -34,7 +34,7 @@ bool WIFI::check_connection() {
 }
 
 String WIFI::get_data() {
-  Serial.println("Getting the data from the server");
+  Serial.println("\nGetting the data from the server");
   http.begin(client, serverUrl);
   int httpCode = http.GET(); 
 

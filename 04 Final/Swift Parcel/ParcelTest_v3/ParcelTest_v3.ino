@@ -25,22 +25,22 @@
 
 //  PINS //
 //Proximity
-#define trig_pin 25
-#define echo_pin 24
+#define trig_pin 47
+#define echo_pin 46
 
 //Solenoid
-#define solenoid_pin1 28  
-#define solenoid_pin2 29  
+#define solenoid_pin1 38  
+#define solenoid_pin2 39  
 
 //Barcode Scanner
-#define barcode_pin 50
+#define barcode_pin 31
 
 //Variables Assignment
 // For Proximity
 float duration;
 float distance;
-const float min_distance = 30.00;  // Minimum distance in cm before warning red at least 2cm
-const int num_samples = 10;        // Number of samples for averaging, to avoid random read
+const float min_distance = 5.00;  // Minimum distance in cm before warning red at least 2cm
+const int num_samples = 5;        // Number of samples for averaging, to avoid random read
 bool stop_operation = false;      
 
 String lastBarcode = ""; // stores last scanned barcodes
@@ -57,6 +57,7 @@ const int TS_LEFT = 112, TS_RT = 944, TS_TOP = 94, TS_BOT = 932;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300); 
 
 MCUFRIEND_kbv tft;
+
 int pixel_x, pixel_y; // Touch coordinates
 
 #define MINPRESSURE 100
@@ -81,8 +82,8 @@ bool Touch_getXY()
 
     if (pressed) {
         //needs to calibrate pixel_x and pixel_y depending on you tft.setRotation()
-        pixel_x = map(p.y, TS_TOP, TS_BOT, 0, tft.width());  // Map the touch coordinates to screen width
-        pixel_y = map(p.x, TS_RT, TS_LEFT, 0, tft.height()); // Map the touch coordinates to screen height
+        pixel_x = map(p.y, TS_TOP, TS_BOT, tft.width(), 0);  // Map the touch coordinates to screen width
+        pixel_y = map(p.x, TS_LEFT, TS_RT, 0, tft.height());  // Map the touch coordinates to screen height
         // for debugging touch if not responding
         // Serial.print("Touch detected: X = ");
         // Serial.print(pixel_x);
@@ -243,7 +244,7 @@ void setup() {
   uint16_t id = tft.readID();
   tft.begin(id);
   tft.fillScreen(BLACK);
-  tft.setRotation(1);
+  tft.setRotation(3);
 
   tft.setCursor(80,140);
   tft.setTextColor(WHITE);
