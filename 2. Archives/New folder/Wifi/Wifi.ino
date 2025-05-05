@@ -1,8 +1,8 @@
 #include "WIFI.h"
 
-const char* ssid = "PLDTHOMEFIBRiEcjt";
-const char* password = "PLDTWIFInC3i3";
-const char* serverUrl = "http://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=97d67a6af77a4f2f42e0312574a5100e";
+const char* ssid = "SSD NAME";
+const char* password = "PASSOWRD";
+const char* serverUrl = "URL";
 
 WIFI wifi(ssid, password, serverUrl);
 

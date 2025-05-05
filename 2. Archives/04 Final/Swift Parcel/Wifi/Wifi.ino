@@ -1,12 +1,8 @@
 #include "WIFI.h"
 
-const char* ssid = "Bini Mikha";
-const char* password = "987654321";
-const char* serverUrl = "http://192.168.221.104:8080/products/all";
-
-const char* ssid = "Bini Mikha";
-const char* password = "987654321";
-const char* serverUrl = "http://192.168.221.104:8080/products/all";
+const char* ssid = "SSD ID";
+const char* password = "PASSWORD";
+const char* serverUrl = "URL";
 
 bool conditions = false;
 

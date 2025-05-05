@@ -10,11 +10,11 @@ https://links2004.github.io/Arduino/dd/d8d/class_h_t_t_p_client.html#a5b90eb84c3
 #include <ArduinoJson.h>  // For JSON parsing
 
 // Wi-Fi credentials
-const char* ssid = "PLDTHOMEFIBRiEcjt";
-const char* password = "PLDTWIFInC3i3";
+const char* ssid = "SS ID";
+const char* password = "YOUR PASS";
 
 // Replace this with your computer's local IP address (your server)
-const char* serverUrl = "http://192.168.1.18:3000";  
+const char* serverUrl = "URL";  
 
 
 void connect_wifi() {

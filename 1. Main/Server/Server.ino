@@ -16,13 +16,10 @@ SERVER server(ssid, password, serverUrl);
 
 // ---------------------------------------------------------- EDITABLE SECTION ---------------------------------
 
-// const char* ssid = "PeppaPaige";
-// const char* password = "Paige04102400";
-// const char* serverUrl = "http://192.168.254.112:8080/products/all";
+const char* ssid = 'YOUR SSID NAME';
+const char* password = 'YOUR PASSWORD';
+const char* serverUrl = 'YOUR SERVER URL';
 
-const char* ssid = "Joshua_Wifi";
-const char* password = "123123123";
-const char* serverUrl = "https://api.npoint.io/d518fa95976f28d1c2fe";
 
 //---------------------------------------------------------------------------------------------------------------
 

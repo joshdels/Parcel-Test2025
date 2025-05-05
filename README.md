@@ -6,11 +6,15 @@ Instructions:
         1. Extract from Main and Place then in you folder --> User/Documents/Arduino
             a. Parcel Parcel_Swift
             b. Server
-        2. Install libraries inside ARDUINO IDE for TFT Screen
+        2. Install libraries inside ARDUINO IDE for TFT Screen.
             a. Adafruit GFX Libraries
             b. Adafruit TouchScreen
-            b. MCUFRIEND_kbv 
-        3. Add ESP 8266 board by adding it this to the preferences --> http://arduino.esp8266.com/stable/package_esp8266com_index.json
+            c. MCUFRIEND_kbv 
+            d. ESP8266WiFi
+            e. ESP8266HTTPClient
+            f. WiFiClientSecure
+            j. ArduinoJson 
+        3. Add ESP 8266 board in the IDE by adding it this to the preferences --> http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
     B. Uploading Sketches to ATMEGA + ESP 8266 Developer Board
         B.1 For ESP 8266 Board
