@@ -25,17 +25,19 @@ const int barcodePin = 50;
 const int sellerPin = 28;
 const int courierPin = 29;
 
+String scannedBarcode = "";
 long user_choice;
 int state = 0;
 bool pinVerified = false;
-String scannedBarcode = "";
-bool isFull;
+bool wifiConnected = false;
+bool serverConnected = false;
+bool isFull = true;
 
 // -------------------------------------------  EDITABLE SECTION  --------------------------------------------------------------------------------------
 
 String courierPasscode = "1234"; // --> for courier pin 
 int ceiling_limit = 40; // --> allowable height in centimeters
-const int maxBarcodes = 800; //lower number if board memory is full
+const int maxBarcodes = 500; //num of size of barcodes, lower number if board memory is full
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,7 +67,7 @@ bool PinUI_passCodeUI(){
 
       delay(1000);
       courier.open();
-      delay(10000);
+      delay(2000);
       courier.close();
       delay(2000);
       
@@ -92,7 +94,7 @@ void proximityHandler() {
   isFull = proximity.check_ceiling_limit(distance);
 }
 
-void fetchBarcodeData() {
+int fetchServerData() {
   // receives the data from esp then place the data to the barcodeList static array
 
   int barcodeCount = 0;
@@ -102,18 +104,20 @@ void fetchBarcodeData() {
 
      static String espBuffer = "";
 
-    while (Serial.available()) { //Serial 3 for mega
-      char c = Serial.read();
+    while (Serial3.available()) { //Serial 3 for mega
+      char c = Serial3.read();
 
       if (c == '\n') {
         espBuffer.trim();
 
         if (espBuffer == "=== WiFi Connection Start ===") {
           Serial.println("WiFi connection started...");
+          wifiConnected = true;
         } else if (espBuffer == "=== WiFi Connection End ===") {
           Serial.println("WiFi connection ended.");
         } else if (espBuffer == "=== Fetching Server Data Start ===") {
           Serial.println("Server data fetch started...");
+          serverConnected = true;
         } else if (espBuffer == "=== Fetching Server Data End ===") {
           Serial.println("Server data fetch ended.");
         } else if (espBuffer == "=== Barcode List Start ===") {
@@ -142,6 +146,7 @@ void fetchBarcodeData() {
         espBuffer += c;
       }
     }
+    delay(500);
 }
   
 //---------------------------------------------------------------------------- MAIN SET UP  ---------------------------------------------------------------------------
@@ -160,12 +165,14 @@ void loop() {
 
   Serial.println("Initializing SwiftDropper");
 
-  fetchBarcodeData();
+  int barcodeCount = fetchServerData();
   proximityHandler();
 
+  //debugging
   Serial.print("Current state: ");
   Serial.println(state);
 
+  if (wifiConnected) {}
 
   switch (state) {
     case 0: {
@@ -175,13 +182,22 @@ void loop() {
       Serial.println(isFull);
       long user_choice = screen.homePage(isFull);
 
-      delay(1000);
+
+      delay(500);
 
       if (user_choice == 1) {
         Serial.println("Courier UI");
         state = 1;
       } else if (user_choice == 2) {
-        Serial.println("Seller UI");
+         Serial.println("Seller UI");
+          if (!wifiConnected) {
+            screen.wifiStatus(wifiConnected);
+            break;
+          }
+          else if (!serverConnected) {
+            screen.serverStatus(serverConnected);
+            break;
+          }
         state = 2;
       } else {
         Serial.println("Returning to Homepage");
@@ -191,7 +207,7 @@ void loop() {
 
     case 1: {
       Serial.println("State 1: Launching Courier PIN UI");
-      delay(1000);
+      delay(500);
 
       PinUI_passCodeUI();
 
@@ -202,14 +218,14 @@ void loop() {
         Serial.println("PIN entry successful. Returning to homepage.");
         state = 0;
       }
-      delay(1000);
+      delay(500);
       break;
     }
 
     case 2: {
       // Seller UI
-      screen.barcodeUI();
-      delay(1000);
+      screen.barcodeUI(barcodeList, barcodeCount);
+      delay(800);
       state = 0;
       break;
     }

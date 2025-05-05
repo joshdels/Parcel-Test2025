@@ -156,7 +156,7 @@ long Screen::homePage(bool isFull) {
 int button2x = 300, button2y = 50, buttonWidth2 = 140, buttonHeight2 = 80; // Scan
 int button3x = 300, button3y = 180, buttonWidth3 = 140, buttonHeight3 = 80; // Cancel
 
-bool Screen::barcodeUI() {
+bool Screen::barcodeUI(String barcodeList[], int count) {
   // displays the barcode UI for the seller to interact with two buttons
     // "Scan Buttons" --> activate the Scanner
     // "Cancel Button" --> exits the barcode UI
@@ -221,16 +221,24 @@ bool Screen::barcodeUI() {
             // once barcode scanner captures details needs to de bugggg
             // i think dito yung array ibutang then i butang sa if scanned == barcodeFetch[]
             // for loop dayon foreach?? 
-
-            if (scanned == "6912670750298") {
-              barcodeFound(scanned);
-              seller.open();
-              delay(1000);
-              seller.close();
-              scanned = "";
-            } else {
-              barcodeNotFound();
+            bool found = false;
+            for (int i = 0; i < count; i++){
+              if (scanned == barcodeList[i]) {
+                barcodeFound(scanned);
+                seller.open();
+                delay(1000);
+                seller.close();
+                scanned = "";
+                found = true;
+                break;
+              } 
             }
+              if (!found) {
+                barcodeNotFound();
+              }
+            }
+
+
           }
           break;  
         }
@@ -245,17 +253,11 @@ bool Screen::barcodeUI() {
         }
       }
     }
-  }
-
   return false;
 }
 
-//--------------------------------------------------------------------------------------------------------------
-
-// needs to remove
 void Screen::showBarcodeData(String barcode="") {
   //This show text is scanned and its barcode
-    delay(2000);
     tft.fillScreen(WHITE);
 
     tft.setCursor(160,90);
@@ -273,40 +275,68 @@ void Screen::showBarcodeData(String barcode="") {
     tft.setTextSize(2);
     tft.println("Please insert your bin chute"); 
 
-    delay(5000);
+    delay(3000);
 }
-//----------------------------------------------
 
-//SERVER CONNECTION
-// optional but if not needs to remove
-void Screen::wifiStatus(bool connection = 0) {
-  //shows user that the parcel box is disconnected to the server
-  if (connection == 1) {
-    delay(5000);
+
+//--------------------------------------------------------------------------------------------------------------
+
+//CONNECTION STATUS
+
+void Screen::wifiStatus(bool wifiConnected) {
+  //shows user that the parcel box cannot connect to wifi
+  if (wifiConnected == false) {
     tft.fillScreen(WHITE);
 
     tft.setCursor(180,90);
     tft.setTextColor(RED);
     tft.setTextSize(5);
-    tft.println("SOORY"); 
+    tft.println("SORRY"); 
 
     tft.setCursor(100,140);
     tft.setTextColor(RED);
     tft.setTextSize(3);
-    tft.println("Server not connected");
+    tft.println("Connection Lost");
 
     tft.setCursor(120,220);
-    tft.setTextColor(RED);
+    tft.setTextColor(BLACK);
     tft.setTextSize(2);
     tft.println("Please try again later");
 
-    Serial.println("server not connected");
-
+    Serial.println("Wifi cannnot connected");
   }
   else {
     Serial.println("Connected to wifi");
   }
-  delay(10000);
+  delay(3000);
+}
+
+void Screen::serverStatus(bool serverConnected) {
+  //shows user that the parcel box cannot connect to wifi
+  if (serverConnected == false) {
+    tft.fillScreen(WHITE);
+
+    tft.setCursor(180,90);
+    tft.setTextColor(RED);
+    tft.setTextSize(4);
+    tft.println("Server Problem"); 
+
+    tft.setCursor(100,140);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Server can't be reached");
+
+    tft.setCursor(120,220);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(2);
+    tft.println("Please try again later");
+
+    Serial.println("Server not connected");
+  }
+  else {
+    Serial.println("Connected to Server");
+  }
+  delay(3000);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------

@@ -23,8 +23,9 @@ class Screen {
     long homePage(bool isFull);
     void endedTransaction();
     void showBarcodeData(String barcode);
-    void wifiStatus(bool connection);
-    bool barcodeUI();
+    void wifiStatus(bool wifiConnection);
+    void serverStatus(bool serverConnection);
+    bool barcodeUI(String barcodeList[], int count);
     void barcodeFound(String barcode);
     void barcodeNotFound();
     void showCourierBin();
