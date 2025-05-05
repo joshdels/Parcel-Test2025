@@ -21,7 +21,7 @@ Instructions:
                 c. serverUrl = YOUR SERVER URL
             3. Switch Mode --> SW5, SW6, SW7 ON, the rest are OFF to upload USB port to Board
             4. Switch Mode --> SW5, SW6 ON the rest are OFF to view the fetch data in JSON format
-        B.2 For ESP ATMEGA Board
+        B.2 For ATMEGA Board
             1. Select Board ATMEGA 2560
             2. Modify Sketch Parcel_Swift Ino
                 a. ceiling_limit --> for bin limit to full in cm
