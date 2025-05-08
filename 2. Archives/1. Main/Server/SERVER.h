@@ -12,8 +12,8 @@ class SERVER {
     const char* ssid;
     const char* password;
     const char* serverUrl;
-    // WiFiClient client; 
-    WiFiClientSecure client; // activate this for example "https://"
+    WiFiClient client; 
+    // WiFiClientSecure client; // activate this for example "https://"
     HTTPClient http;   
 
   public:

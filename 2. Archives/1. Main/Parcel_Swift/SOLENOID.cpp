@@ -10,11 +10,11 @@ SOLENOID::SOLENOID(int solenoidPin){
 void SOLENOID::close(){
   //Close the solenoid
   digitalWrite(pin, HIGH);
-  delay(2000);
+  delay(3000);
 }
 
 void SOLENOID::open(){
   //Opens the solenoid
   digitalWrite(pin, LOW);
-  delay(2000);
+  delay(3000);
 }

@@ -9,24 +9,25 @@ SERVER::SERVER(const char* ssid, const char* password, const char* serverUrl) {
 bool SERVER::check_connection() {
 
   int attempt = 0;
-  const int maxAttempts = 30;
+  const int maxAttempts = 20;
 
   WiFi.begin(ssid, password);
 
-  // Serial.println("Connecting to WiFi...");
+  delay(1000);
+  Serial.println("Connecting to WiFi...");
 
   while (WiFi.status() != WL_CONNECTED && attempt < maxAttempts) {
     delay(1000);
-    // Serial.print(".");
-    // attempt++;
+    Serial.print(".");
+    attempt++;
   }
   if (WiFi.status() == WL_CONNECTED){
-    // delay(200);
-    // Serial.println("\nConnected to WiFi Successfully");
+    delay(1000);
+    Serial.println("\nConnected to WiFi Successfully");
     return true;
   }
   else {
-    // Serial.println("\nFailed to connect to WiFi :(\nPlease Check your WiFi SSID or Password");
+    Serial.println("\nFailed to connect to WiFi :(\nPlease Check your WiFi SSID or Password");
     return false;
   }
 }
@@ -35,19 +36,19 @@ String SERVER::get_data() {
   //Returns a Json data fecthed from the server
   String payload = "";
 
-  client.setInsecure(); // activate when uses "https://"
+  // client.setInsecure(); // activate when uses "https://"
 
   http.begin(client, serverUrl);
   int httpCode = http.GET(); 
 
-  // Serial.print("HTTP response code: ");
-  // Serial.print(httpCode);
+  Serial.print("HTTP response code: ");
+  Serial.print(httpCode);
 
   if (httpCode == 200) { 
     payload = http.getString(); 
   } 
   else {
-    // Serial.println("Error in HTTP request");
+    Serial.println("Error in HTTP request");
   }
 
   http.end();
@@ -69,7 +70,7 @@ std::vector<String> SERVER::createBarcodeList(String payload) {
 
   JsonArray array = doc["data"].as<JsonArray>();
   if (array.isNull()) {
-    // Serial.println("JSON is not a valid array.");
+    Serial.println("JSON is not a valid array.");
     return barcodes;
   }
 

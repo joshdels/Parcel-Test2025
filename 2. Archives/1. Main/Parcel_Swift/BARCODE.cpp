@@ -18,7 +18,7 @@ String BARCODE::activateScanner() {
   String barcode = "";
   
   digitalWrite(barcodePin, LOW);
-    delay(2000);
+    delay(800);
 
     while (Serial2.available()) {
       char c = Serial2.read();
@@ -31,8 +31,8 @@ String BARCODE::activateScanner() {
     if (barcode.length() > 0 && barcode != lastBarcode) {
       lastBarcode = barcode;       
     }
-
   delay(2000);
+  Serial.println(barcode);
   return barcode;
 }
 

@@ -18,6 +18,11 @@
 #define TS_TOP  94
 #define TS_BOT  932
 
+// Pressable Buttons configurations
+int button0x = 0, button0y = 60, buttonWidth0 = 430, buttonHeight0 = 300; // black screen
+int button1x = 420, button1y = 10, buttonWidth1 = 50, buttonHeight1 = 50; // courier
+
+
 Screen::Screen()
   : ts(TouchScreen(9, A2, A3, 8, 300)),
   //might erase this 
@@ -49,9 +54,6 @@ bool Screen::Touch_getXY() {
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 //HOMEPAGE
-int button0x = 0, button0y = 60, buttonWidth0 = 430, buttonHeight0 = 300; // black screen
-int button1x = 420, button1y = 10, buttonWidth1 = 50, buttonHeight1 = 50; // courier
-
 long Screen::homePage(bool isFull) {
   //Shows the introductory homepage screen page and return with a bool 1 & 2
      // 1 to direct to courier passcode pin 
@@ -60,7 +62,7 @@ long Screen::homePage(bool isFull) {
   tft.setCursor(100,100);
   tft.setTextColor(BLACK);
   tft.setTextSize(4);
-  tft.println("Smart Parcel");
+  tft.println("Swift Dropper");
 
   tft.setCursor(130,140);
   tft.setTextColor(BLACK);
@@ -89,6 +91,7 @@ long Screen::homePage(bool isFull) {
       tft.setTextSize(2);
       tft.println("Press Anywhere to Start");
     }
+
     
     if (Touch_getXY()) {
       if (pixel_x > button1x && pixel_x < button1x + buttonWidth1 &&
@@ -116,19 +119,19 @@ long Screen::homePage(bool isFull) {
         tft.setTextSize(2);
         tft.println("to open the courier bin");
 
-        delay(1000);
+        delay(3000);
         return 1;
       }
       else if (pixel_x > button0x && pixel_x < button0x + buttonWidth0 &&
                pixel_y > button0y && pixel_y < button0y + buttonHeight0) {
         Serial.println("Barcode UI");
 
+        // add check bin is full here
         if (isFull) {
-          // showBinStatus();`
+          showBinStatus();
           break;
 
         } else {
-
           tft.fillScreen(WHITE);
           tft.setCursor(30,120);
           tft.setTextColor(BLACK);
@@ -139,7 +142,7 @@ long Screen::homePage(bool isFull) {
           tft.setTextColor(BLACK);
           tft.setTextSize(2);
           tft.println("Please wait for a few seconds");
-          delay(1000);
+          delay(3000);
           return 2;
         }
       }
@@ -215,18 +218,18 @@ bool Screen::barcodeUI(String barcodeList[], int count) {
           Serial.println(scanned);
 
           if (scanned.length() > 0) {
+            // once barcode scanner captures details needs to de bugggg
+            // i think dito yung array ibutang then i butang sa if scanned == barcodeFetch[]
+            // for loop dayon foreach?? 
             bool found = false;
-            for (int i = 0; i < 500; i++){
-              scanned.trim();
-              barcodeList[i].trim();
-              if (String(scanned).equals(String(barcodeList[i]))) {
+            for (int i = 0; i < count; i++){
+              if (scanned == barcodeList[i]) {
                 barcodeFound(scanned);
                 seller.open();
                 delay(1000);
                 seller.close();
                 scanned = "";
                 found = true;
-                
                 break;
               } 
             }
@@ -234,6 +237,7 @@ bool Screen::barcodeUI(String barcodeList[], int count) {
                 barcodeNotFound();
               }
             }
+
 
           }
           break;  
@@ -244,12 +248,34 @@ bool Screen::barcodeUI(String barcodeList[], int count) {
             pixel_y > button3y && pixel_y < button3y + buttonHeight3) {
           Serial.println("EXIT pressed. returning to homepage");
           endedTransaction();
-          running = false; 
+          running = false;  // Exit loop
           break;
         }
       }
     }
   return false;
+}
+
+void Screen::showBarcodeData(String barcode="") {
+  //This show text is scanned and its barcode
+    tft.fillScreen(WHITE);
+
+    tft.setCursor(160,90);
+    tft.setTextColor(GREEN);
+    tft.setTextSize(4);
+    tft.println("Scanned Sucessfully"); 
+
+    tft.setCursor(140,140);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(2);
+    tft.println(barcode); 
+
+    tft.setCursor(140,160);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(2);
+    tft.println("Please insert your bin chute"); 
+
+    delay(3000);
 }
 
 
@@ -258,7 +284,6 @@ bool Screen::barcodeUI(String barcodeList[], int count) {
 //CONNECTION STATUS
 
 void Screen::wifiStatus(bool wifiConnected) {
-  delay(2000);
   //shows user that the parcel box cannot connect to wifi
   if (wifiConnected == false) {
     tft.fillScreen(WHITE);
@@ -319,9 +344,6 @@ void Screen::serverStatus(bool serverConnected) {
 //PROXIMITY SECTION
 void Screen::showBinStatus() {
   // Shows Bin is full or not 
-
-    Serial.println("Bins is full, cannot open");
-
     tft.fillScreen(WHITE);
     tft.setCursor(120,100);
     tft.setTextColor(RED);
@@ -338,7 +360,7 @@ void Screen::showBinStatus() {
     tft.setTextSize(2.5);
     tft.println("Try again later :)"); 
 
-    delay(2000);
+    delay(3000);
 }
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -352,7 +374,7 @@ void Screen::endedTransaction() {
     tft.setCursor(100,100);
     tft.setTextColor(BLACK);
     tft.setTextSize(4);
-    tft.println("Smart Parcels");
+    tft.println("Swift Dropper");
 
     tft.setCursor(140,150);
     tft.setTextColor(GREEN);
@@ -369,8 +391,6 @@ void Screen::endedTransaction() {
 
 void Screen::barcodeFound(String barcode) {
   //This show text that the transaction is ended
-    Serial.println("Barcode Matched!!!");
-
     tft.fillScreen(WHITE);
 
     tft.setCursor(130,70);
@@ -403,7 +423,6 @@ void Screen::barcodeFound(String barcode) {
 
 void Screen::barcodeNotFound() {
   //Shows the parcel's barcode is not in the system
-    Serial.println("Barcode dont match :( ");
     delay(800);
 
     tft.fillScreen(WHITE);
@@ -465,6 +484,8 @@ void Screen::scannerActivate() {
     tft.print("At the barcode scanner");
 
     delay(3000);
+
+
 }
 
 

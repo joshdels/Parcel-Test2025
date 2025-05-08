@@ -12,33 +12,31 @@ bool conditions = false;
 String jsonData = "";
 std::vector<String> barcodes;
 
+SERVER server(ssid, password, serverUrl);
+
 // ---------------------------------------------------------- EDITABLE SECTION ---------------------------------
 
-// const char* ssid = "PeppaPaige";
-// const char* password = "Paige04102400";
-// // const char* serverUrl = "http://192.168.254.105:8080/products/all";
-// const char* serverUrl = "https://api.npoint.io/4ab3bc1e007126a7ba66";
+const char* ssid = 'YOUR SSID NAME';
+const char* password = 'YOUR PASSWORD';
+const char* serverUrl = 'YOUR SERVER URL';
 
-const char* ssid = "PLDTHOMEFIBRiEcjt";
-const char* password = "PLDTWIFInC3i3";
-const char* serverUrl = "https://api.npoint.io/4ab3bc1e007126a7ba66";
 
 //---------------------------------------------------------------------------------------------------------------
 
-SERVER server(ssid, password, serverUrl);
-
 void setup() {
-  Serial.begin(9600);
-}
-
-
-void loop() {
-  
- 
+  // Used delimeter to be read via UART Serial3 to be read by ATMEGA 
+  Serial.begin(9600); 
+  Serial.println("Connecting to WiFi...");
 
   conditions = server.check_connection();  // Check WiFi connection
 
-   if (conditions) {    
+   if (conditions) {
+    Serial.println("=== WiFi Connected ===");
+
+    // Mark the start of data fetching
+    Serial.println("=== Fetching Server Data Start ===");
+    delay(100);
+    
     jsonData = server.get_data();
     
     if (jsonData.length() > 0) {
@@ -50,19 +48,29 @@ void loop() {
         Serial.println("=== Barcode List Start ===");
         for (const String& code : barcodes) {
           Serial.println(code);  
-          Serial.flush();
+          delay(300);           
         }
         Serial.println("=== Barcode List End ===");
       } else {
         Serial.println("No barcodes found.");
       }
+    } else {
+      Serial.println("No data received from server.");
     }
+
+    // Mark the end of data fetching
+    Serial.println("=== Fetching Server Data End ===");
+    delay(300);
+  } else {
+    Serial.println("Failed to connect to WiFi.");
   }
+
+  // Mark the end of WiFi connection
+  Serial.println("=== WiFi Connection End ===");
 }
 
-
-
-
+void loop() {
+}
 
 
 

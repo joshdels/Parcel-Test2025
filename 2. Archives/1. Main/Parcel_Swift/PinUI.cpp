@@ -104,11 +104,11 @@ void PinUI::handleTouch() {
                     verified = true;  
                 } else {
                     drawMessage("Incorrect", RED);  
-                    delay(500);  
+                    delay(1000);  
                     currentInput = "";  
                     drawPinDisplay();  
                 }
-                delay(500);  
+                delay(800);  
 
             } else if (i == 10) {  
                 currentInput = "";

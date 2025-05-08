@@ -29,15 +29,14 @@ String scannedBarcode = "";
 long user_choice;
 int state = 0;
 bool pinVerified = false;
-bool wifiConnected = true;
-bool serverConnected = true;
-bool isFull = false;
-int barcodeCount = 0;
+bool wifiConnected = false;
+bool serverConnected = false;
+bool isFull = true;
 
 // -------------------------------------------  EDITABLE SECTION  --------------------------------------------------------------------------------------
 
 String courierPasscode = "1234"; // --> for courier pin 
-int ceiling_limit = 30; // --> allowable height in centimeters
+int ceiling_limit = 40; // --> allowable height in centimeters
 const int maxBarcodes = 500; //num of size of barcodes, lower number if board memory is full
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,57 +95,60 @@ void proximityHandler() {
 }
 
 int fetchServerData() {
-  // Receives the data from ESP and places data into the barcodeList static array
+  // receives the data from esp then place the data to the barcodeList static array
 
-  for (int i = 0; i < maxBarcodes; i++) {
-    barcodeList[i] = "";
-  }
-
+  int barcodeCount = 0;
   bool isBarcodeSection = false;
-  static String espBuffer = "";
 
   Serial.println("Waiting data from ESP8266...");
 
-  while (Serial3.available()) {
-    char c = Serial3.read();
-    Serial.write(c); 
+     static String espBuffer = "";
 
-    if (c == '\n') {
-      espBuffer.trim(); 
+    while (Serial3.available()) { //Serial 3 for mega
+      char c = Serial3.read();
 
-      if (espBuffer == "=== Barcode List Start ===") {
-        Serial.println("Barcode list started...");
-        isBarcodeSection = true;
-        barcodeCount = 0; 
-      } 
-      else if (espBuffer == "=== Barcode List End ===") {
-        Serial.println("Barcode list ended.");
-        isBarcodeSection = false;
+      if (c == '\n') {
+        espBuffer.trim();
 
-        Serial.println("Collected Barcodes:");
-        for (int i = 0; i < barcodeCount; i++) {
-          Serial.println(barcodeList[i]);
+        if (espBuffer == "=== WiFi Connection Start ===") {
+          Serial.println("WiFi connection started...");
+          wifiConnected = true;
+        } else if (espBuffer == "=== WiFi Connection End ===") {
+          Serial.println("WiFi connection ended.");
+        } else if (espBuffer == "=== Fetching Server Data Start ===") {
+          Serial.println("Server data fetch started...");
+          serverConnected = true;
+        } else if (espBuffer == "=== Fetching Server Data End ===") {
+          Serial.println("Server data fetch ended.");
+        } else if (espBuffer == "=== Barcode List Start ===") {
+          Serial.println("Barcode list started...");
+          isBarcodeSection = true;
+          barcodeCount = 0; // reset on each new list
+        } else if (espBuffer == "=== Barcode List End ===") {
+          Serial.println("Barcode list ended.");
+          isBarcodeSection = false;
+
+          // Display all collected barcodes
+          Serial.println("Collected Barcodes:");
+          for (int i = 0; i < barcodeCount; i++) {
+            Serial.println(barcodeList[i]);
+          }
+        } else if (espBuffer.length() > 0) {
+          if (isBarcodeSection && barcodeCount < maxBarcodes) {
+            barcodeList[barcodeCount++] = espBuffer;
+          } else {
+            // Serial.println(espBuffer);
+          }
         }
-      } 
-      else if (espBuffer.length() > 0) {
-        if (isBarcodeSection && barcodeCount < maxBarcodes) {
-          barcodeList[barcodeCount++] = espBuffer;
-        } else {
-          Serial.println(espBuffer);
-        }
+
+        espBuffer = ""; 
+      } else {
+        espBuffer += c;
       }
-
-      espBuffer = "";
-    } 
-    else {
-      espBuffer += c;
     }
-  }
-
-  delay(1000); 
-  return barcodeCount;
+    delay(500);
 }
-
+  
 //---------------------------------------------------------------------------- MAIN SET UP  ---------------------------------------------------------------------------
 
 void setup() {
@@ -163,27 +165,37 @@ void loop() {
 
   Serial.println("Initializing SwiftDropper");
 
-  barcodeCount = fetchServerData();
-  delay(2000);
-
+  int barcodeCount = fetchServerData();
   proximityHandler();
+
+  //debugging
+  Serial.print("Current state: ");
+  Serial.println(state);
 
   if (wifiConnected) {}
 
   switch (state) {
     case 0: {
       Serial.println("State 0: Displaying Home Page");
+
+      Serial.print("Box is full?");
+      Serial.println(isFull);
       long user_choice = screen.homePage(isFull);
 
-      delay(3000);
+
+      delay(500);
 
       if (user_choice == 1) {
         Serial.println("Courier UI");
         state = 1;
       } else if (user_choice == 2) {
          Serial.println("Seller UI");
-          if (isFull) {
-            screen.showBinStatus();
+          if (!wifiConnected) {
+            screen.wifiStatus(wifiConnected);
+            break;
+          }
+          else if (!serverConnected) {
+            screen.serverStatus(serverConnected);
             break;
           }
         state = 2;
@@ -223,11 +235,8 @@ void loop() {
       state = 0;
       break;
   }
-  Serial.print("Check Data List");
-  for (int i = 0; i < barcodeCount; i++) {
-    Serial.println(barcodeList[i]);
-  } 
 }
+
 
 
 
